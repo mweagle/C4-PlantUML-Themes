@@ -68,6 +68,7 @@ The generated theme files are below:
 # main
 readme_text = README_HEADER
 theme_files = glob.glob("./palettes/*.puml")
+theme_files.sort()
 for each_file in theme_files:
   logger.info("Checking file: %s", each_file)
   path_base = each_file.removesuffix(".puml")
