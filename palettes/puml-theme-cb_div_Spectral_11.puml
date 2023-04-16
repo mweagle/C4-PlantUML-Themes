@@ -1,5 +1,5 @@
 ' Metadata
-' Created: 2023-04-15 04:20:55.720116+00:00
+' Created: 2023-04-16 16:02:23.289455+00:00
 !$COLOR_INDEX_0="#9E0142"
 !$COLOR_INDEX_1="#D53E4F"
 !$COLOR_INDEX_2="#F46D43"
@@ -20,10 +20,16 @@
 !$COLOR_TEXT_NEUTRAL="#FFFFBF"
 !$COLOR_REL_COLOR="#FFFFBF"
 
+!$COLOR_TEXT_FALLBACK_COLOR ?= "#505050"
+
 !function $textcolor($bgColor)
-!if $bgcolor == $COLOR_INDEX_5
-!return "#000000"
-!elseif %is_light($bgColor) == %true()
+!if $bgcolor == $COLOR_INDEX_4 || $bgcolor == $COLOR_INDEX_5
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif $bgColor == $COLOR_INDEX_10
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif $bgColor == $COLOR_INDEX_0
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif %is_light($bgColor)
 !return $COLOR_TEXT_DARK
 !else
 !return $COLOR_TEXT_LIGHT

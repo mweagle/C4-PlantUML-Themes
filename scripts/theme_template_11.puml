@@ -18,10 +18,16 @@
 !$$COLOR_TEXT_NEUTRAL="${color5}"
 !$$COLOR_REL_COLOR="${color5}"
 
+!$$COLOR_TEXT_FALLBACK_COLOR ?= "#505050"
+
 !function $$textcolor($$bgColor)
-!if $$bgcolor == $$COLOR_INDEX_5
-!return "#000000"
-!elseif %is_light($$bgColor) == %true()
+!if $$bgcolor == $$COLOR_INDEX_4 || $$bgcolor == $$COLOR_INDEX_5
+!return $$COLOR_TEXT_FALLBACK_COLOR
+!elseif $$bgColor == $$COLOR_INDEX_10
+!return $$COLOR_TEXT_FALLBACK_COLOR
+!elseif $$bgColor == $$COLOR_INDEX_0
+!return $$COLOR_TEXT_FALLBACK_COLOR
+!elseif %is_light($$bgColor)
 !return $$COLOR_TEXT_DARK
 !else
 !return $$COLOR_TEXT_LIGHT

@@ -9,7 +9,7 @@ Usage:
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' START - Handle local PlantUML render and remote hosting
 '
-!$THEME_NAME = div_RdGy_9
+!$THEME_NAME = cb_div_RdGy_9
 '
 !if (%getenv("LOCAL_EDIT_BLOG_ROOT") == "")
 !$THEME_ROOT_PATH = "https://YOUR_HOSTNAME/resources/"

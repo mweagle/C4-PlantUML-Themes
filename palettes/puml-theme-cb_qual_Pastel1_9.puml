@@ -1,5 +1,5 @@
 ' Metadata
-' Created: 2023-04-15 04:20:55.720116+00:00
+' Created: 2023-04-16 16:02:23.289455+00:00
 !$THEME = "cb_qual_Pastel1_9"
 
 !$COLOR_INDEX_0="#FBB4AE"
@@ -18,10 +18,16 @@
 !$COLOR_TEXT_NEUTRAL="#FED9A6"
 !$COLOR_REL_COLOR="#FED9A6"
 
+!$COLOR_TEXT_FALLBACK_COLOR ?= "#505050"
+
 !function $textcolor($bgColor)
-!if $bgcolor == $COLOR_INDEX_5
-!return "#000000"
-!elseif %is_light($bgColor) == %true()
+!if $bgcolor == $COLOR_INDEX_4 || $bgcolor == $COLOR_INDEX_5
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif $bgColor == $COLOR_INDEX_8
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif $bgColor == $COLOR_INDEX_0
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif %is_light($bgColor)
 !return $COLOR_TEXT_DARK
 !else
 !return $COLOR_TEXT_LIGHT

@@ -20,6 +20,8 @@ logger.addHandler(ConsoleOutputHandler)
 # constants
 logger = logging.getLogger("palette-creator")
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 URL_COLORBREWER_SOURCE_JSON = "https://colorbrewer2.org/export/colorbrewer.json"
 CURRENT_UTC_TIME = datetime.now(timezone.utc)
 THEME_OUTPUT_COMMON = f"""' Metadata
@@ -27,11 +29,11 @@ THEME_OUTPUT_COMMON = f"""' Metadata
 """
 
 THEME_OUTPUT_TEMPLATE_09 = (
-    THEME_OUTPUT_COMMON + Path("./theme_template_9.puml").read_text()
+    THEME_OUTPUT_COMMON + Path(os.path.join(SCRIPT_DIR, "theme_template_9.puml")).read_text()
 )
 
 THEME_OUTPUT_TEMPLATE_11 = (
-    THEME_OUTPUT_COMMON + Path("./theme_template_11.puml").read_text()
+    THEME_OUTPUT_COMMON + Path(os.path.join(SCRIPT_DIR, "theme_template_11.puml")).read_text()
 )
 
 # Template expressions for 9 and 11 colors
@@ -128,8 +130,7 @@ def create_theme_from_colors(palette_name, hex_colors):
 # main
 url_parts = URL_COLORBREWER_SOURCE_JSON.split("/")
 colorbrewer_filename = url_parts[-1]
-dir_path = os.path.dirname(os.path.realpath(__file__))
-colorbrewer_path = os.path.join(dir_path, colorbrewer_filename)
+colorbrewer_path = os.path.join(SCRIPT_DIR, colorbrewer_filename)
 
 # Download the latest colorbrewer file from the site
 # https://colorbrewer2.org/#
