@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import re
 from urllib.request import urlopen
+from urllib.error import HTTPError
 from string import Template
 from datetime import datetime, timezone
 import seaborn as sns
@@ -11,6 +12,14 @@ import logging
 import zlib
 import base64
 import string
+
+################################################################################
+# logger
+logger = logging.getLogger("palette-creator")
+logger.setLevel(logging.INFO)
+ConsoleOutputHandler = logging.StreamHandler()
+logger.addHandler(ConsoleOutputHandler)
+
 
 ################################################################################
 # Excerpts from https://gist.github.com/ryardley/64816f5097003a35f9726aab676920d0
@@ -38,19 +47,13 @@ def plantuml_encode(plantuml_text):
 
 
 ################################################################################
-# logger
-logger = logging.getLogger("palette-creator")
-logger.setLevel(logging.INFO)
-ConsoleOutputHandler = logging.StreamHandler()
-logger.addHandler(ConsoleOutputHandler)
-
-################################################################################
 # constants
 logger = logging.getLogger("palette-creator")
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 URL_COLORBREWER_SOURCE_JSON = "https://colorbrewer2.org/export/colorbrewer.json"
+URL_ALL_ELEMENTS_TEST = "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/percy/TestAllElementsWithLegend.puml"
 CURRENT_UTC_TIME = datetime.now(timezone.utc)
 THEME_OUTPUT_COMMON = f"""' Metadata
 ' Created: {CURRENT_UTC_TIME}
@@ -163,10 +166,13 @@ def create_theme_from_colors(palette_name, hex_colors):
     logger.info("Created thumbnail: %s", output_png_filename)
 
     # Create a sample output file
-    logger.info("Creating sample PlantUML file for palette: {0}".format(palette_name))
+    logger.info("Creating PlantUML theme: {0}".format(palette_name))
     output_data = theme_template_example_output.substitute(
-        palette=palette_name, theme_data=theme_color_data
+        palette=palette_name,
+        theme_data=theme_color_data,
+        plantuml_data=all_test_elements_plantuml,
     )
+    logger.debug("Theme Data\n{0}\n".format(output_data))
 
     # Read the sample output file, turn it into a PlantUML encoded
     # url, then fetch the image and download it to the local preview image
@@ -175,15 +181,29 @@ def create_theme_from_colors(palette_name, hex_colors):
     plant_uml_image_url = "https://www.plantuml.com/plantuml/png/{0}".format(
         encoded_url_part
     )
-    logger.info("Image URL: {0}".format(plant_uml_image_url))
+    logger.debug("Image URL: {0}".format(plant_uml_image_url))
 
     with open(output_example_image_filename, "wb") as local_png_file:
-        with urlopen(plant_uml_image_url) as remote_png_response:
-            local_png_file.write(remote_png_response.read())
+        try:
+            with urlopen(plant_uml_image_url) as remote_png_response:
+                local_png_file.write(remote_png_response.read())
+        except HTTPError as err:
+            logger.error("Failed to render\n{0}\n".format(output_data))
+            logger.error("HTTP Error: {0}".format(err.code))
+            logger.error("HTTP Body\n{0}".format(err.read()))
+            raise err
 
 
 ################################################################################
 # main
+# Download the PlantUML resource that has all the test elements so that the
+# server side render doesn't need to make another requests..
+logger.info("Fetching latest PlantUML test elements content")
+all_test_elements_plantuml = ""
+with urlopen(URL_ALL_ELEMENTS_TEST) as puml_response:
+    all_test_elements_plantuml = puml_response.read().decode()
+
+# Fetch the latest palettes...
 url_parts = URL_COLORBREWER_SOURCE_JSON.split("/")
 colorbrewer_filename = url_parts[-1]
 colorbrewer_path = os.path.join(SCRIPT_DIR, colorbrewer_filename)
