@@ -55,23 +55,30 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 URL_COLORBREWER_SOURCE_JSON = "https://colorbrewer2.org/export/colorbrewer.json"
 URL_ALL_ELEMENTS_TEST = "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/percy/TestAllElementsWithLegend.puml"
 CURRENT_UTC_TIME = datetime.now(timezone.utc)
-THEME_OUTPUT_COMMON = f"""' Metadata
-' Created: {CURRENT_UTC_TIME}
-"""
 
-THEME_OUTPUT_TEMPLATE_09 = (
-    THEME_OUTPUT_COMMON
-    + Path(os.path.join(SCRIPT_DIR, "theme_template_9.puml")).read_text()
+
+def theme_concat(*theme_filenames):
+    content = ""
+    for each_filename in theme_filenames:
+        content += Path(os.path.join(SCRIPT_DIR, each_filename)).read_text()
+        content += "\n"
+
+    return content
+
+
+THEME_OUTPUT_TEMPLATE_09 = theme_concat(
+    "theme_template_common_header.puml",
+    "theme_template_9.puml",
+    "theme_template_common_footer.puml",
 )
 
-THEME_OUTPUT_TEMPLATE_11 = (
-    THEME_OUTPUT_COMMON
-    + Path(os.path.join(SCRIPT_DIR, "theme_template_11.puml")).read_text()
+THEME_OUTPUT_TEMPLATE_11 = theme_concat(
+    "theme_template_common_header.puml",
+    "theme_template_11.puml",
+    "theme_template_common_footer.puml",
 )
 
-ALL_ELEMENTS_THEMED_OUTPUT = Path(
-    os.path.join(SCRIPT_DIR, "theme_template_all_elements_example.puml")
-).read_text()
+ALL_ELEMENTS_THEMED_OUTPUT = theme_concat("theme_template_all_elements_example.puml")
 
 # Template expressions for 9 and 11 colors
 theme_template_09 = Template(THEME_OUTPUT_TEMPLATE_09)
@@ -113,6 +120,7 @@ def create_theme_from_colors(palette_name, hex_colors):
         # Great - take the name, create a file with the template content, call it good
         theme_color_data = theme_template_09.substitute(
             palette=palette_name,
+            current_utc_time=CURRENT_UTC_TIME,
             color0=hex_colors[0],
             color1=hex_colors[1],
             color2=hex_colors[2],
@@ -127,6 +135,7 @@ def create_theme_from_colors(palette_name, hex_colors):
         # Great - take the name, create a file with the template content, call it good
         theme_color_data = theme_template_11.substitute(
             palette=palette_name,
+            current_utc_time=CURRENT_UTC_TIME,
             color0=hex_colors[0],
             color1=hex_colors[1],
             color2=hex_colors[2],
@@ -174,9 +183,11 @@ def create_theme_from_colors(palette_name, hex_colors):
     )
     logger.debug("Theme Data\n{0}\n".format(output_data))
 
+    # write the output to a temp file, invoke the local render to create the file
+    logger.info("Creating sample image for palette: {0}".format(palette_name))
+
     # Read the sample output file, turn it into a PlantUML encoded
     # url, then fetch the image and download it to the local preview image
-    logger.info("Creating sample image for palette: {0}".format(palette_name))
     encoded_url_part = plantuml_encode(output_data)
     plant_uml_image_url = "https://www.plantuml.com/plantuml/png/{0}".format(
         encoded_url_part
@@ -189,8 +200,8 @@ def create_theme_from_colors(palette_name, hex_colors):
                 local_png_file.write(remote_png_response.read())
         except HTTPError as err:
             logger.error("Failed to render\n{0}\n".format(output_data))
-            logger.error("HTTP Error: {0}".format(err.code))
-            logger.error("HTTP Body\n{0}".format(err.read()))
+            logger.error("HTTP Status Code: {0}".format(err.code))
+            logger.error("HTTP Headers: {0}".format(err.headers))
             raise err
 
 
@@ -222,8 +233,10 @@ with urlopen(URL_COLORBREWER_SOURCE_JSON) as json_response:
         print("Downloaded JSON data: {0}".format(colorbrewer_path))
 
 # Create the PUML themes and palette visualization
+max_count = 0  # Set to non-zero to short-circuit creating all the palettes
 theme_count = 0
 total_entries = 0
+
 # Colorbrewer themes...
 with open(colorbrewer_path, "r") as file:
     jsonData = json.load(file)
@@ -248,6 +261,10 @@ with open(colorbrewer_path, "r") as file:
             )
             create_theme_from_colors(palette_name, hex_colors)
             theme_count += 1
+
+            if max_count > 0 and theme_count >= max_count:
+                logger.info("Created maximum number of themes: {0}".format(max_count))
+                quit()
 
 # Seaborn palettes
 logger.info("Creating Seaborn palettes")

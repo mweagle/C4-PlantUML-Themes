@@ -1,0 +1,54 @@
+' FOOTER
+' default text color of all elements
+!$$ELEMENT_FONT_COLOR ?= $$COLOR_TEXT_FALLBACK_COLOR
+
+' arrow related colors and text size
+!$$ARROW_COLOR ?= $$COLOR_TEXT_FALLBACK_COLOR
+!$$ARROW_FONT_COLOR ?= $$COLOR_TEXT_FALLBACK_COLOR
+
+' system boundary related colors and style
+!$$SYSTEM_BOUNDARY_COLOR ?= %darken($$SYSTEM_BG_COLOR, 33)
+!$$SYSTEM_BOUNDARY_BG_COLOR ?= $$BOUNDARY_BG_COLOR
+!$$SYSTEM_BOUNDARY_BORDER_STYLE ?= $$BOUNDARY_BORDER_STYLE
+
+' enterprise boundary related colors and style
+!$$ENTERPRISE_BOUNDARY_COLOR ?= $$BOUNDARY_COLOR
+!$$ENTERPRISE_BOUNDARY_BG_COLOR ?= $$BOUNDARY_BG_COLOR
+!$$ENTERPRISE_BOUNDARY_BORDER_STYLE ?= $$BOUNDARY_BORDER_STYLE
+
+' container boundary related colors and style
+!$$CONTAINER_BOUNDARY_COLOR ?= %darken($$CONTAINER_BG_COLOR, 33)
+!$$CONTAINER_BOUNDARY_BG_COLOR ?= $$BOUNDARY_BG_COLOR
+!$$CONTAINER_BOUNDARY_BORDER_STYLE ?= $$BOUNDARY_BORDER_STYLE
+
+' Sketch related settings
+!$$LEGEND_DETAILS_SMALL_SIZE ?= $$DEFAULT_SMALL_FONT_SIZE
+!$$LEGEND_DETAILS_NORMAL_SIZE ?= $$DEFAULT_NORMAL_FONT_SIZE
+
+' legend related texts
+!$$LEGEND_SHADOW_TEXT ?= "shadow"
+!$$LEGEND_NO_SHADOW_TEXT ?= "no shadow"
+!$$LEGEND_NO_FONT_BG_TEXT ?= "last text and back color"
+!$$LEGEND_NO_FONT_TEXT ?= "last text color"
+!$$LEGEND_NO_BG_TEXT ?= "last back color"
+!$$LEGEND_NO_LINE_TEXT ?= "last line color"
+!$$LEGEND_ROUNDED_BOX ?= "rounded box"
+!$$LEGEND_EIGHT_SIDED ?= "eight sided"
+!$$LEGEND_DOTTED_LINE ?= "dotted"
+!$$LEGEND_DASHED_LINE ?= "dashed"
+!$$LEGEND_BOLD_LINE ?= "bold"
+!$$LEGEND_BOUNDARY ?= "boundary"
+!$$LEGEND_DASHED_BOUNDARY ?= "dashed"
+' transparent is ignored, produces smaller legends
+' !$$LEGEND_DASHED_TRANSPARENT_BOUNDARY ?= "dashed, transparent"
+!$$LEGEND_DASHED_TRANSPARENT_BOUNDARY ?= "dashed"
+
+' Sketch
+!$$SKETCH_BG_COLOR ?= "transparent"
+!$$SKETCH_FONT_NAME ?= "Gochi Hand"
+!$$SKETCH_FOOTER_WARNING ?= "Warning:"
+!$$SKETCH_FOOTER_TEXT ?= "Created for discussion, needs to be validated"
+
+' size of rectangle shape corner markers
+!$$ROUNDED_BOX_SIZE ?= 25
+!$$EIGHT_SIDED_SIZE ?= 18

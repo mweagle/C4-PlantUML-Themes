@@ -1,0 +1,20 @@
+' Metadata
+' Created: ${current_utc_time}
+!$$COLOR_TEXT_FALLBACK_COLOR ?= "#000000"
+!$$COLOR_BORDER_COLOR="#000000"
+
+' HEADER
+!$$DEFAULT_NORMAL_FONT_SIZE ?= 12
+!$$DEFAULT_SMALL_FONT_SIZE ?= 8
+
+' stereotype and technology font size
+!$$STEREOTYPE_FONT_SIZE ?= $$DEFAULT_NORMAL_FONT_SIZE
+!$$TECHN_FONT_SIZE ?= $$DEFAULT_NORMAL_FONT_SIZE
+!$$ARROW_FONT_SIZE ?= $$DEFAULT_NORMAL_FONT_SIZE
+
+' (default) boundary related colors and style
+!$$BOUNDARY_COLOR ?= $$COLOR_BORDER_COLOR
+!$$BOUNDARY_BG_COLOR ?= "solid"
+!$$BOUNDARY_BORDER_STYLE ?= "dashed"
+
+' THEME COLORS
