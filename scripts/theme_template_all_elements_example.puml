@@ -1,0 +1,5 @@
+'Theme: "puml-theme-${palette}.puml"
+'Theme colors
+${theme_data}
+' Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/percy/TestAllElementsWithLegend.puml

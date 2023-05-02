@@ -1,5 +1,21 @@
 ' Metadata
-' Created: 2023-04-16 16:02:23.289455+00:00
+' Created: 2023-05-02 04:49:35.260221+00:00
+!$THEME = "cb_div_RdYlGn_11"
+
+!function $textcolor($bgColor)
+!if $bgcolor == $COLOR_INDEX_4 || $bgcolor == $COLOR_INDEX_5
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif $bgColor == $COLOR_INDEX_10
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif $bgColor == $COLOR_INDEX_0
+!return $COLOR_TEXT_FALLBACK_COLOR
+!elseif %is_light($bgColor)
+!return $COLOR_TEXT_DARK
+!else
+!return $COLOR_TEXT_LIGHT
+!endif
+!endfunction
+
 !$COLOR_INDEX_0="#A50026"
 !$COLOR_INDEX_1="#D73027"
 !$COLOR_INDEX_2="#F46D43"
@@ -17,24 +33,10 @@
 
 !$COLOR_TEXT_LIGHT=$COLOR_INDEX_0
 !$COLOR_TEXT_DARK=$COLOR_INDEX_10
-!$COLOR_TEXT_NEUTRAL="#FFFFBF"
-!$COLOR_REL_COLOR="#FFFFBF"
+!$COLOR_TEXT_NEUTRAL=$textcolor($COLOR_INDEX_5)
+!$COLOR_REL_COLOR=$textcolor($COLOR_INDEX_0)
 
 !$COLOR_TEXT_FALLBACK_COLOR ?= "#505050"
-
-!function $textcolor($bgColor)
-!if $bgcolor == $COLOR_INDEX_4 || $bgcolor == $COLOR_INDEX_5
-!return $COLOR_TEXT_FALLBACK_COLOR
-!elseif $bgColor == $COLOR_INDEX_10
-!return $COLOR_TEXT_FALLBACK_COLOR
-!elseif $bgColor == $COLOR_INDEX_0
-!return $COLOR_TEXT_FALLBACK_COLOR
-!elseif %is_light($bgColor)
-!return $COLOR_TEXT_DARK
-!else
-!return $COLOR_TEXT_LIGHT
-!endif
-!endfunction
 
 ' stereotype and technology font size
 !$STEREOTYPE_FONT_SIZE ?= 12

@@ -1,24 +1,6 @@
 ' Metadata
-' Created: 2023-04-16 16:02:23.289455+00:00
+' Created: 2023-05-02 04:49:35.260221+00:00
 !$THEME = "seaborn_Paired_9"
-
-!$COLOR_INDEX_0="#a6cee3"
-!$COLOR_INDEX_1="#1f78b4"
-!$COLOR_INDEX_2="#b2df8a"
-!$COLOR_INDEX_3="#33a02c"
-!$COLOR_INDEX_4="#fb9a99"
-!$COLOR_INDEX_5="#e31a1c"
-!$COLOR_INDEX_6="#fdbf6f"
-!$COLOR_INDEX_7="#ff7f00"
-!$COLOR_INDEX_8="#cab2d6"
-!$COLOR_BORDER_COLOR="#000000"
-
-!$COLOR_TEXT_LIGHT=$COLOR_INDEX_0
-!$COLOR_TEXT_DARK=$COLOR_INDEX_8
-!$COLOR_TEXT_NEUTRAL="#fb9a99"
-!$COLOR_REL_COLOR="#fb9a99"
-
-!$COLOR_TEXT_FALLBACK_COLOR ?= "#505050"
 
 !function $textcolor($bgColor)
 !if $bgcolor == $COLOR_INDEX_4 || $bgcolor == $COLOR_INDEX_5
@@ -33,6 +15,26 @@
 !return $COLOR_TEXT_LIGHT
 !endif
 !endfunction
+
+!$COLOR_INDEX_0="#a6cee3"
+!$COLOR_INDEX_1="#1f78b4"
+!$COLOR_INDEX_2="#b2df8a"
+!$COLOR_INDEX_3="#33a02c"
+!$COLOR_INDEX_4="#fb9a99"
+!$COLOR_INDEX_5="#e31a1c"
+!$COLOR_INDEX_6="#fdbf6f"
+!$COLOR_INDEX_7="#ff7f00"
+!$COLOR_INDEX_8="#cab2d6"
+!$COLOR_BORDER_COLOR="#000000"
+
+!$COLOR_TEXT_LIGHT=$COLOR_INDEX_0
+!$COLOR_TEXT_DARK=$COLOR_INDEX_8
+!$COLOR_TEXT_NEUTRAL=$textcolor($COLOR_INDEX_4)
+!$COLOR_REL_COLOR=$textcolor($COLOR_INDEX_0)
+
+!$COLOR_TEXT_FALLBACK_COLOR ?= "#505050"
+
+
 
 ' stereotype and technology font size
 !$STEREOTYPE_FONT_SIZE ?= 12

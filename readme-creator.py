@@ -70,17 +70,23 @@ readme_text = README_HEADER
 theme_files = glob.glob("./palettes/*.puml")
 theme_files.sort()
 for each_file in theme_files:
-  logger.info("Checking file: %s", each_file)
-  path_base = each_file.removesuffix(".puml")
-  file_imagepath = path_base + ".png"
-  file_basename = Path(each_file).name
+    logger.info("Checking file: %s", each_file)
+    path_base = each_file.removesuffix(".puml")
+    file_palette_path = path_base + ".png"
+    file_preview_path = path_base + "-example.png"
+    file_basename = Path(each_file).name
 
-  readme_section = """
+    readme_section = """
 ## {0}
 
-[![{1}]({1})]({2})
-""".format(file_basename, file_imagepath, each_file)
-  readme_text += readme_section
+| Palette  | Image |
+| ------------- | ------------- |
+| [![{1}]({1})]({2})  | [![{3}]({3})]({2})  |
 
-  with open("README.md", "w") as readme_output:
-      readme_output.write(readme_text)
+""".format(
+        file_basename, file_palette_path, each_file, file_preview_path
+    )
+    readme_text += readme_section
+
+    with open("README.md", "w") as readme_output:
+        readme_output.write(readme_text)

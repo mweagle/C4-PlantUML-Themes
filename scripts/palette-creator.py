@@ -8,6 +8,34 @@ from datetime import datetime, timezone
 import seaborn as sns
 import matplotlib.pyplot as plt
 import logging
+import zlib
+import base64
+import string
+
+################################################################################
+# Excerpts from https://gist.github.com/ryardley/64816f5097003a35f9726aab676920d0
+# to create the encoded PlantUML data to render as a PNG which
+# we'll save locally
+plantuml_alphabet = (
+    string.digits + string.ascii_uppercase + string.ascii_lowercase + "-_"
+)
+base64_alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits + "+/"
+b64_to_plantuml = bytes.maketrans(
+    base64_alphabet.encode("utf-8"), plantuml_alphabet.encode("utf-8")
+)
+plantuml_to_b64 = bytes.maketrans(
+    plantuml_alphabet.encode("utf-8"), base64_alphabet.encode("utf-8")
+)
+
+
+def plantuml_encode(plantuml_text):
+    """zlib compress the plantuml text and encode it for the plantuml server"""
+    zlibbed_str = zlib.compress(plantuml_text.encode("utf-8"))
+    compressed_string = zlibbed_str[2:-4]
+    return (
+        base64.b64encode(compressed_string).translate(b64_to_plantuml).decode("utf-8")
+    )
+
 
 ################################################################################
 # logger
@@ -29,16 +57,23 @@ THEME_OUTPUT_COMMON = f"""' Metadata
 """
 
 THEME_OUTPUT_TEMPLATE_09 = (
-    THEME_OUTPUT_COMMON + Path(os.path.join(SCRIPT_DIR, "theme_template_9.puml")).read_text()
+    THEME_OUTPUT_COMMON
+    + Path(os.path.join(SCRIPT_DIR, "theme_template_9.puml")).read_text()
 )
 
 THEME_OUTPUT_TEMPLATE_11 = (
-    THEME_OUTPUT_COMMON + Path(os.path.join(SCRIPT_DIR, "theme_template_11.puml")).read_text()
+    THEME_OUTPUT_COMMON
+    + Path(os.path.join(SCRIPT_DIR, "theme_template_11.puml")).read_text()
 )
+
+ALL_ELEMENTS_THEMED_OUTPUT = Path(
+    os.path.join(SCRIPT_DIR, "theme_template_all_elements_example.puml")
+).read_text()
 
 # Template expressions for 9 and 11 colors
 theme_template_09 = Template(THEME_OUTPUT_TEMPLATE_09)
 theme_template_11 = Template(THEME_OUTPUT_TEMPLATE_11)
+theme_template_example_output = Template(ALL_ELEMENTS_THEMED_OUTPUT)
 
 SEABORN_PALETTES = [
     "deep",
@@ -70,10 +105,10 @@ def rgb_str_to_hex(r, g, b):
 
 
 def create_theme_from_colors(palette_name, hex_colors):
-    output_data = ""
+    theme_color_data = ""
     if len(hex_colors) == 9:
         # Great - take the name, create a file with the template content, call it good
-        output_data = theme_template_09.substitute(
+        theme_color_data = theme_template_09.substitute(
             palette=palette_name,
             color0=hex_colors[0],
             color1=hex_colors[1],
@@ -87,7 +122,7 @@ def create_theme_from_colors(palette_name, hex_colors):
         )
     elif len(hex_colors) == 11:
         # Great - take the name, create a file with the template content, call it good
-        output_data = theme_template_11.substitute(
+        theme_color_data = theme_template_11.substitute(
             palette=palette_name,
             color0=hex_colors[0],
             color1=hex_colors[1],
@@ -107,14 +142,16 @@ def create_theme_from_colors(palette_name, hex_colors):
         )
         return
 
-    if output_data == "":
+    if theme_color_data == "":
         raise RuntimeError("Invalid output template created")
 
     output_basename = "./palettes/puml-theme-{0}".format(palette_name)
     output_puml_filename = "{0}.puml".format(output_basename)
     output_png_filename = "{0}.png".format(output_basename)
+    output_example_image_filename = "{0}-example.png".format(output_basename)
+
     with open(output_puml_filename, "w") as theme_file_output:
-        theme_file_output.write(output_data)
+        theme_file_output.write(theme_color_data)
     logger.info("Created theme: %s", output_puml_filename)
 
     # Create a color palette example
@@ -124,6 +161,25 @@ def create_theme_from_colors(palette_name, hex_colors):
     plt.close("all")
 
     logger.info("Created thumbnail: %s", output_png_filename)
+
+    # Create a sample output file
+    logger.info("Creating sample PlantUML file for palette: {0}".format(palette_name))
+    output_data = theme_template_example_output.substitute(
+        palette=palette_name, theme_data=theme_color_data
+    )
+
+    # Read the sample output file, turn it into a PlantUML encoded
+    # url, then fetch the image and download it to the local preview image
+    logger.info("Creating sample image for palette: {0}".format(palette_name))
+    encoded_url_part = plantuml_encode(output_data)
+    plant_uml_image_url = "https://www.plantuml.com/plantuml/png/{0}".format(
+        encoded_url_part
+    )
+    logger.info("Image URL: {0}".format(plant_uml_image_url))
+
+    with open(output_example_image_filename, "wb") as local_png_file:
+        with urlopen(plant_uml_image_url) as remote_png_response:
+            local_png_file.write(remote_png_response.read())
 
 
 ################################################################################
